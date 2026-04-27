@@ -4,8 +4,26 @@
  * - External libs (gsap, ScrollTrigger, SplitText, ...) are loaded in Webflow
  */
 
+function waitForGsap(cb, tries = 80) {
+  if (window.gsap && window.ScrollTrigger) return cb();
+  if (tries <= 0) return console.warn("GSAP / Plugins not loaded");
+  setTimeout(() => waitForGsap(cb, tries - 1), 50);
+}
 
+function init() {
+  waitForGsap(() => {
+    if (window.gsap?.registerPlugin) {
+      gsap.registerPlugin(ScrollTrigger);
+    }
+    initPixelatedScrollTransition();
+  });
+}
 
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init, { once: true });
+} else {
+  init();
+}
 
 /* -----------------------------
    Pixelated Scroll Transition
@@ -217,7 +235,3 @@ function initPixelatedScrollTransition() {
   );
 }
 
-// Initialize Pixelated Scroll Transition
-document.addEventListener("DOMContentLoaded", () => {
-  initPixelatedScrollTransition();
-});
