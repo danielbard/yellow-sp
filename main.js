@@ -323,12 +323,20 @@ function initImageTrail(config = {}) {
     if (!state.isActive) return;
 
     const rectWrapper = wrapper.getBoundingClientRect();
+
+    if (
+      e.clientX < rectWrapper.left ||
+      e.clientX > rectWrapper.right ||
+      e.clientY < rectWrapper.top ||
+      e.clientY > rectWrapper.bottom
+    ) return;
+
     const { x: relativeX, y: relativeY } = getRelativeCoordinates(e, rectWrapper);
-    
+
     const distanceFromLast = MathUtils.distance(
-      relativeX, 
-      relativeY, 
-      state.last.x, 
+      relativeX,
+      relativeY,
+      state.last.x,
       state.last.y
     );
 
