@@ -174,7 +174,9 @@ function initPixelatedScrollTransition() {
   }
 
   function setupInstance(wrapper) {
-    const section = wrapper.closest("section") || wrapper.parentElement;
+    const section = wrapper.closest('.pixelated-scroll__container')
+      || wrapper.closest("section")
+      || wrapper.parentElement;
     const cols = getColumns(wrapper);
     const rows = getRows(wrapper);
     const mode = getMode(wrapper);

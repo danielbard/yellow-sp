@@ -32,6 +32,22 @@
   aspect-ratio: 2.5/1;
 }
 
+.pixelated-scroll__container {
+  position: relative;
+}
+
+.pixelated-scroll__section {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.section_logo {
+  position: relative;
+  z-index: 1;
+  margin-top: -100vh;
+}
+
 /* ----------------------------
    Image Trail Following Cursor
 ----------------------------- */
