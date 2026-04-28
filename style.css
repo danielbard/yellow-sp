@@ -8,7 +8,7 @@
 }
 
 [data-pixelated-scroll-column] {
-  display: flex;
+  display: flex:1;
   flex-direction: column;
   justify-content: flex-end;
   align-items: stretch;
