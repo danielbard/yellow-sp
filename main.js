@@ -33,7 +33,7 @@ function initPixelatedScrollTransition() {
   const defaultRows = 6;
   const defaultMode = "cover";
   const defaultScrollStart = { cover: "top top", reveal: "top top" };
-  const defaultScrollEnd = { cover: "bottom top", reveal: "bottom top" };
+  const defaultScrollEnd = { cover: "bottom bottom", reveal: "bottom top" };
   const defaultScrub = 0.3;
   const defaultPixelDuration = 0.1;
   const defaultStaggerAmount = 1.5;
