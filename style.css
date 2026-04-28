@@ -10,7 +10,6 @@
 [data-pixelated-scroll-column] {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   align-items: stretch;
   flex: 1 1 0%;
   min-width: 0;
