@@ -32,10 +32,6 @@
   will-change: opacity;
 }
 
-[data-pixelated-scroll-transition][data-mode="reveal"] {
-  inset: 0% 0% auto;
-}
-
 [data-pixelated-scroll-transition][data-pixel-ratio="2.5/1"] [data-pixelated-scroll-pixel] {
   aspect-ratio: 2.5/1;
 }
