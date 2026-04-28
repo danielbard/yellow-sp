@@ -32,8 +32,8 @@ function initPixelatedScrollTransition() {
   const defaultColumns = 12;
   const defaultRows = 6;
   const defaultMode = "cover";
-  const defaultScrollStart = { cover: "top, top", reveal: "top top" };
-  const defaultScrollEnd = { cover: "bottom, bottom", reveal: "bottom bottom" };
+  const defaultScrollStart = { cover: "bottom bottom", reveal: "top bottom" };
+  const defaultScrollEnd = { cover: "bottom top", reveal: "top center" };
   const defaultScrub = 0.3;
   const defaultPixelDuration = 0.1;
   const defaultStaggerAmount = 1.5;
@@ -174,9 +174,7 @@ function initPixelatedScrollTransition() {
   }
 
   function setupInstance(wrapper) {
-    const section = wrapper.closest('.pixelated-scroll__container')
-      || wrapper.closest("section")?.parentElement
-      || wrapper.parentElement;
+    const section = wrapper.closest("section") || wrapper.parentElement;
     const cols = getColumns(wrapper);
     const rows = getRows(wrapper);
     const mode = getMode(wrapper);

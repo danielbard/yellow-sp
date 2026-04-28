@@ -1,18 +1,10 @@
 /* -----------------------------
    Pixelated Scroll Transition
 ----------------------------- */
-[data-pixelated-scroll-transition] {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  pointer-events: none;
-}
-
 [data-pixelated-scroll-panel] {
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 100%;
 }
 
 [data-pixelated-scroll-column] {
@@ -25,34 +17,19 @@
 }
   
 [data-pixelated-scroll-pixel] {
-  flex: 1;
+  aspect-ratio: 1;
   width: 100%;
   background-color: currentColor;
   backface-visibility: hidden;
   will-change: opacity;
 }
 
+[data-pixelated-scroll-transition][data-mode="reveal"] {
+  inset: 0% 0% auto;
+}
+
 [data-pixelated-scroll-transition][data-pixel-ratio="2.5/1"] [data-pixelated-scroll-pixel] {
   aspect-ratio: 2.5/1;
-}
-
-.section_logo {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  overflow: hidden;
-}
-
-.pixelated-scroll__section {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.pixelated-scroll__container {
-  height: 200vh;
-  position: relative;
 }
 
 /* ----------------------------
