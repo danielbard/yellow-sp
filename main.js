@@ -11,6 +11,8 @@ function waitForGsap(cb, tries = 80) {
 }
 
 function init() {
+  initRotatingImageTrail();
+
   waitForGsap(() => {
     if (window.gsap?.registerPlugin) {
       gsap.registerPlugin(ScrollTrigger);
@@ -308,7 +310,3 @@ function initRotatingImageTrail() {
   });
 }
 
-// Initialize Rotating Image Trail
-document.addEventListener("DOMContentLoaded", function () {
-  initRotatingImageTrail();
-});
