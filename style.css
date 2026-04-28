@@ -1,42 +1,35 @@
 /* -----------------------------
    Pixelated Scroll Transition
 ----------------------------- */
-[data-pixelated-scroll-transition] {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
 [data-pixelated-scroll-panel] {
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 100%;
 }
 
 [data-pixelated-scroll-column] {
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   align-items: stretch;
   flex: 1 1 0%;
   min-width: 0;
 }
-
+  
 [data-pixelated-scroll-pixel] {
-  flex: 1;
+  aspect-ratio: 1;
   width: 100%;
   background-color: currentColor;
   backface-visibility: hidden;
   will-change: opacity;
 }
 
-[data-pixelated-scroll-transition][data-pixel-ratio="2.5/1"] [data-pixelated-scroll-pixel] {
-  aspect-ratio: 2.5/1;
+[data-pixelated-scroll-transition][data-mode="reveal"] {
+  inset: 0% 0% auto;
 }
 
-.pixelated-scroll__container {
-  position: relative;
+[data-pixelated-scroll-transition][data-pixel-ratio="2.5/1"] [data-pixelated-scroll-pixel] {
+  aspect-ratio: 2.5/1;
 }
 
 /* ----------------------------
