@@ -18,6 +18,7 @@ function init() {
       gsap.registerPlugin(ScrollTrigger);
     }
     initPixelatedScrollTransition();
+    initImageTrail();
   });
 }
 
@@ -234,79 +235,179 @@ function initPixelatedScrollTransition() {
   );
 }
 
-/* --------------------
-   Rotating Image Trail
---------------------- */
-function initRotatingImageTrail() {
-  var area = document.querySelector("[data-trail-area]");
-  if (!area) return;
+/* ----------------------------
+   Image Trail Following Cursor
+----------------------------- */
+function initImageTrail(config = {}) {
 
-  var collection = area.querySelector("[data-trail-collection]");
-  if (!collection) return;
+  // config + defaults
+  const options = {
+    minWidth: config.minWidth ?? 992,
+    moveDistance: config.moveDistance ?? 15,
+    stopDuration: config.stopDuration ?? 300,
+    trailLength: config.trailLength ?? 5
+  };
 
-  var items = collection.querySelectorAll("[data-trail-item]");
-  if (!items.length) return;
+  const wrapper = document.querySelector('[data-trail="wrapper"]');
+  
+  if (!wrapper || window.innerWidth < options.minWidth) {
+    return;
+  }
+  
+  // State management
+  const state = {
+    trailInterval: null,
+    globalIndex: 0,
+    last: { x: 0, y: 0 },
+    trailImageTimestamps: new Map(),
+    trailImages: Array.from(document.querySelectorAll('[data-trail="item"]')),
+    isActive: false
+  };
 
-  // Distance logic
-  var index = 0;
-  var lastCloneX = null;
-  var lastCloneY = null;
+  // Utility functions
+  const MathUtils = {
+    lerp: (a, b, n) => (1 - n) * a + n * b,
+    distance: (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1)
+  };
 
-  var cardWidth = items[0].getBoundingClientRect().width;
-  var stepDistance = cardWidth * 0.5;
-
-  function spawnTrailItem(x, y) {
-    var original = items[index];
-    var clone = original.cloneNode(true);
-
-    clone.style.left = x + "px";
-    clone.style.top = y + "px";
-
-    clone.setAttribute("data-trail-item", "hidden");
-
-    area.appendChild(clone);
-
-    void clone.getBoundingClientRect();
-
-    clone.setAttribute("data-trail-item", "visible");
-
-    setTimeout(function () {
-      clone.setAttribute("data-trail-item", "transition-out");
-    }, 400);
-
-    setTimeout(function () {
-      clone.remove();
-    }, 1200);
-
-    index = (index + 1) % items.length;
-    lastCloneX = x;
-    lastCloneY = y;
+  function getRelativeCoordinates(e, rect) {
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
   }
 
-  // Mouse movement logic
-  area.addEventListener("mousemove", function (event) {
-    var rect = area.getBoundingClientRect();
-    var x = event.clientX - rect.left;
-    var y = event.clientY - rect.top;
+  function activate(trailImage, x, y) {
+    if (!trailImage) return;
 
-    if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
-      lastCloneX = null;
-      lastCloneY = null;
-      return;
+    const rect = trailImage.getBoundingClientRect();
+    const styles = {
+      left: `${x - rect.width / 2}px`,
+      top: `${y - rect.height / 2}px`,
+      zIndex: state.globalIndex,
+      display: 'block'
+    };
+
+    Object.assign(trailImage.style, styles);
+    state.trailImageTimestamps.set(trailImage, Date.now());
+
+	// Here, animate how the images will appear!
+    gsap.fromTo(
+      trailImage,
+      { autoAlpha: 0, scale: 0.8 },
+      {
+        scale: 1,
+        autoAlpha: 1,
+        duration: 0.2,
+        overwrite: true
+      }
+    );
+
+    state.last = { x, y };
+  }
+
+  function fadeOutTrailImage(trailImage) {
+    if (!trailImage) return;
+		
+    // Here, animate how the images will disappear!
+    gsap.to(trailImage, {
+      opacity: 0,
+      scale: 0.2,
+      duration: 0.8,
+      ease: "expo.out",
+      onComplete: () => {
+        gsap.set(trailImage, { autoAlpha: 0 });
+      }
+    });
+  }
+
+  function handleOnMove(e) {
+    if (!state.isActive) return;
+
+    const rectWrapper = wrapper.getBoundingClientRect();
+    const { x: relativeX, y: relativeY } = getRelativeCoordinates(e, rectWrapper);
+    
+    const distanceFromLast = MathUtils.distance(
+      relativeX, 
+      relativeY, 
+      state.last.x, 
+      state.last.y
+    );
+
+    if (distanceFromLast > window.innerWidth / options.moveDistance) {
+      const lead = state.trailImages[state.globalIndex % state.trailImages.length];
+      const tail = state.trailImages[(state.globalIndex - options.trailLength) % state.trailImages.length];
+
+      activate(lead, relativeX, relativeY);
+      fadeOutTrailImage(tail);
+      state.globalIndex++;
     }
+  }
 
-    if (lastCloneX === null || lastCloneY === null) {
-      spawnTrailItem(x, y);
-      return;
+  function cleanupTrailImages() {
+    const currentTime = Date.now();
+    for (const [trailImage, timestamp] of state.trailImageTimestamps.entries()) {
+      if (currentTime - timestamp > options.stopDuration) {
+        fadeOutTrailImage(trailImage);
+        state.trailImageTimestamps.delete(trailImage);
+      }
     }
+  }
 
-    var dx = x - lastCloneX;
-    var dy = y - lastCloneY;
-    var distance = Math.sqrt(dx * dx + dy * dy);
+  function startTrail() {
+    if (state.isActive) return;
+    
+    state.isActive = true;
+    wrapper.addEventListener("mousemove", handleOnMove);
+    state.trailInterval = setInterval(cleanupTrailImages, 100);
+  }
 
-    if (distance >= stepDistance) {
-      spawnTrailItem(x, y);
-    }
+  function stopTrail() {
+    if (!state.isActive) return;
+    
+    state.isActive = false;
+    wrapper.removeEventListener("mousemove", handleOnMove);
+    clearInterval(state.trailInterval);
+    state.trailInterval = null;
+    
+    // Clean up remaining trail images
+    state.trailImages.forEach(fadeOutTrailImage);
+    state.trailImageTimestamps.clear();
+  }
+
+  // Initialize ScrollTrigger
+  ScrollTrigger.create({
+    trigger: wrapper,
+    start: "top bottom",
+    end: "bottom top",
+    onEnter: startTrail,
+    onEnterBack: startTrail,
+    onLeave: stopTrail,
+    onLeaveBack: stopTrail
   });
+
+  // Clean up on window resize
+  const handleResize = () => {
+    if (window.innerWidth < options.minWidth && state.isActive) {
+      stopTrail();
+    } else if (window.innerWidth >= options.minWidth && !state.isActive) {
+      startTrail();
+    }
+  };
+
+  window.addEventListener('resize', handleResize);
+
+  return () => {
+    stopTrail();
+    window.removeEventListener('resize', handleResize);
+  };
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const imageTrail = initImageTrail({
+    minWidth: 992,
+    moveDistance: 15,
+    stopDuration: 350,
+    trailLength: 8
+  });
+});
