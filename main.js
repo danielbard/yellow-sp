@@ -356,7 +356,7 @@ function initImageTrail(config = {}) {
     if (state.isActive) return;
     
     state.isActive = true;
-    wrapper.addEventListener("mousemove", handleOnMove);
+    wrapper.parentElement.addEventListener("mousemove", handleOnMove);
     state.trailInterval = setInterval(cleanupTrailImages, 100);
   }
 
@@ -364,7 +364,7 @@ function initImageTrail(config = {}) {
     if (!state.isActive) return;
     
     state.isActive = false;
-    wrapper.removeEventListener("mousemove", handleOnMove);
+    wrapper.parentElement.removeEventListener("mousemove", handleOnMove);
     clearInterval(state.trailInterval);
     state.trailInterval = null;
     

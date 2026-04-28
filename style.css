@@ -31,3 +31,8 @@
 [data-pixelated-scroll-transition][data-pixel-ratio="2.5/1"] [data-pixelated-scroll-pixel] {
   aspect-ratio: 2.5/1;
 }
+
+/* ----------------------------
+   Image Trail Following Cursor
+----------------------------- */
+.trail-wrap { pointer-events: none; }
