@@ -37,22 +37,23 @@
 
 .pixelated-scroll__container {
   position: relative;
-  height: 200vh;
 }
 
 .pixelated-scroll__section {
   position: sticky;
   top: 0;
-  z-index: 2;
   height: 100vh;
+  z-index: 2;
   overflow: hidden;
 }
 
 .section_logo {
-  position: relative;
+  position: sticky;
+  top: 0;
+  height: 100vh;
   z-index: 1;
+  margin-top: -100vh;
 }
-
 /* ----------------------------
    Image Trail Following Cursor
 ----------------------------- */
