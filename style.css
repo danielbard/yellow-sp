@@ -32,6 +32,23 @@
   aspect-ratio: 2.5/1;
 }
 
+.pixelated-scroll__section {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.section_logo {
+  position: relative;
+  z-index: 1;
+  margin-top: -100vh; /* zieht die Section hinter den Hero */
+}
+
+.pixelated-scroll__container {
+  height: 200vh;
+  position: relative;
+}
+
 /* ----------------------------
    Image Trail Following Cursor
 ----------------------------- */
