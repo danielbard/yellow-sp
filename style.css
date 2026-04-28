@@ -17,7 +17,7 @@
 }
   
 [data-pixelated-scroll-pixel] {
-  aspect-ratio: 1;
+  aspect-ratio: flex;
   width: 100%;
   background-color: currentColor;
   backface-visibility: hidden;
