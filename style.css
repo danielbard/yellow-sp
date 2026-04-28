@@ -37,6 +37,7 @@
 
 .pixelated-scroll__container {
   position: relative;
+  height: 300vh;
 }
 
 .pixelated-scroll__section {
