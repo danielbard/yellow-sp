@@ -237,7 +237,7 @@ function initPixelatedScrollTransition() {
 ---------------------------------- */
 function initButtonCharacterStagger() {
   const offsetIncrement = 0.01; // Transition offset increment in seconds
-  const buttons = document.querySelectorAll('[data-button-animate-chars]');
+  const buttons = document.querySelectorAll('.btn-animate-chars__text');
 
   buttons.forEach(button => {
     const text = button.textContent; // Get the button's text content
@@ -259,6 +259,4 @@ function initButtonCharacterStagger() {
 }
 
 // Initialize Button Character Stagger Animation
-document.addEventListener('DOMContentLoaded', () => {
-  initButtonCharacterStagger();
-});
+initButtonCharacterStagger();
