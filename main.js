@@ -11,6 +11,7 @@ function waitForGsap(cb, tries = 80) {
 }
 
 function init() {
+  initButtonCharacterStagger();
   waitForGsap(() => {
     if (window.gsap?.registerPlugin) {
       gsap.registerPlugin(ScrollTrigger);
@@ -422,29 +423,34 @@ document.addEventListener("DOMContentLoaded", () => {
    Button with CSS Character Stagger
 ---------------------------------- */
 function initButtonCharacterStagger() {
-  const offsetIncrement = 0.01; // Transition offset increment in seconds
+  const offsetIncrement = 0.01;
   const buttons = document.querySelectorAll('[data-button-animate-chars]');
 
   buttons.forEach(button => {
-    const text = button.textContent; // Get the button's text content
-    button.innerHTML = ''; // Clear the original content
+    if (button.dataset.charsInitialized) return;
+    button.dataset.charsInitialized = 'true';
 
-    [...text].forEach((char, index) => {
-      const span = document.createElement('span');
-      span.textContent = char;
-      span.style.transitionDelay = `${index * offsetIncrement}s`;
+    let charIndex = 0;
 
-      // Handle spaces explicitly
-      if (char === ' ') {
-        span.style.whiteSpace = 'pre'; // Preserve space width
+    function processNode(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent;
+        if (!text) return;
+        const fragment = document.createDocumentFragment();
+        [...text].forEach(char => {
+          const span = document.createElement('span');
+          span.textContent = char;
+          span.style.transitionDelay = `${charIndex * offsetIncrement}s`;
+          if (char === ' ') span.style.whiteSpace = 'pre';
+          fragment.appendChild(span);
+          charIndex++;
+        });
+        node.parentNode.replaceChild(fragment, node);
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        Array.from(node.childNodes).forEach(processNode);
       }
+    }
 
-      button.appendChild(span);
-    });
+    Array.from(button.childNodes).forEach(processNode);
   });
 }
-
-// Initialize Button Character Stagger Animation
-document.addEventListener('DOMContentLoaded', () => {
-  initButtonCharacterStagger();
-});
