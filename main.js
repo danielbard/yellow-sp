@@ -161,7 +161,7 @@ function initPixelatedScrollTransition() {
       stConfig.start = "top top";
       stConfig.end = "+=100%";
       stConfig.pin = section;
-      stConfig.pinSpacing = false;
+      stConfig.pinSpacing = true;
     } else {
       stConfig.start = getScrollStart(wrapper, mode);
       stConfig.end = getScrollEnd(wrapper, mode);
@@ -176,7 +176,7 @@ function initPixelatedScrollTransition() {
     tl.to(cells, {
       autoAlpha: toAlpha,
       duration: defaultPixelDuration,
-      stagger: { amount: defaultStaggerAmount, from: isSticky ? "end" : "start" },
+      stagger: { amount: defaultStaggerAmount, from: "start" },
       ease: "none",
     });
 
