@@ -30,7 +30,7 @@ function initPixelatedScrollTransition() {
   // Defaults — edit these to change fallbacks if no data-attribute is added
   const defaultColumns = 12;
   const defaultRows = 6;
-  const defaultMode = "cover";
+  const defaultMode = "sticky";
   const defaultScrollStart = { cover: "bottom bottom", reveal: "top bottom" };
   const defaultScrollEnd = { cover: "bottom top", reveal: "top center" };
   const defaultScrub = 0.3;
@@ -68,7 +68,8 @@ function initPixelatedScrollTransition() {
   }
 
   function getMode(wrapper) {
-    return wrapper.dataset.mode === "reveal" ? "reveal" : defaultMode;
+    const m = wrapper.dataset.mode;
+    return (m === "cover" || m === "reveal" || m === "sticky") ? m : defaultMode;
   }
 
   function getRows(wrapper) {
@@ -148,24 +149,34 @@ function initPixelatedScrollTransition() {
   }
 
   function createAnimation(wrapper, cells, section, mode) {
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: getScrollStart(wrapper, mode),
-        end: getScrollEnd(wrapper, mode),
-        scrub: defaultScrub,
-        invalidateOnRefresh: true,
-      },
-    });
+    const isSticky = mode === "sticky";
 
-    const fromAlpha = mode === "cover" ? 0 : 1;
-    const toAlpha = mode === "cover" ? 1 : 0;
+    const stConfig = {
+      trigger: section,
+      scrub: defaultScrub,
+      invalidateOnRefresh: true,
+    };
+
+    if (isSticky) {
+      stConfig.start = "top top";
+      stConfig.end = "+=100%";
+      stConfig.pin = section;
+      stConfig.pinSpacing = false;
+    } else {
+      stConfig.start = getScrollStart(wrapper, mode);
+      stConfig.end = getScrollEnd(wrapper, mode);
+    }
+
+    const tl = gsap.timeline({ scrollTrigger: stConfig });
+
+    const fromAlpha = mode === "reveal" ? 1 : 0;
+    const toAlpha = mode === "reveal" ? 0 : 1;
 
     gsap.set(cells, { autoAlpha: fromAlpha });
     tl.to(cells, {
       autoAlpha: toAlpha,
       duration: defaultPixelDuration,
-      stagger: { amount: defaultStaggerAmount, from: "start" },
+      stagger: { amount: defaultStaggerAmount, from: isSticky ? "end" : "start" },
       ease: "none",
     });
 
@@ -178,17 +189,24 @@ function initPixelatedScrollTransition() {
     const rows = getRows(wrapper);
     const mode = getMode(wrapper);
 
+    if (mode === "sticky") {
+      section.style.zIndex = "10";
+    }
+
     const { panel } = buildGrid(wrapper, cols, rows);
     const cells = collectCells(panel, cols, rows, mode);
     const tl = createAnimation(wrapper, cells, section, mode);
 
-    return { wrapper, tl };
+    return { wrapper, tl, section, mode };
   }
 
   function destroyInstance(instance) {
     if (instance.tl) {
       instance.tl.scrollTrigger?.kill();
       instance.tl.kill();
+    }
+    if (instance.mode === "sticky") {
+      instance.section.style.zIndex = "";
     }
     const panel = instance.wrapper.querySelector("[data-pixelated-scroll-panel]");
     if (panel) panel.remove();
