@@ -11,7 +11,6 @@ function waitForGsap(cb, tries = 80) {
 }
 
 function init() {
-  initButtonCharacterStagger();
   waitForGsap(() => {
     if (window.gsap?.registerPlugin) {
       gsap.registerPlugin(ScrollTrigger);
@@ -232,8 +231,3 @@ function initPixelatedScrollTransition() {
     }
   );
 }
-
-// Initialize Pixelated Scroll Transition
-document.addEventListener("DOMContentLoaded", () => {
-  initPixelatedScrollTransition();
-});
