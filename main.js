@@ -485,7 +485,7 @@ function initFooterParallax(){
   
     if (dark) {
       tl.from(dark, {
-        opacity: 0.8,
+        opacity: 1,
         ease: 'linear'
       }, '<');
     }
