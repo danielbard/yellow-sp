@@ -18,6 +18,7 @@ function init() {
       gsap.registerPlugin(ScrollTrigger);
     }
     initPixelatedScrollTransition();
+    initFooterParallax();
     initImageTrail({
       minWidth: 992,
       moveDistance: 15,
@@ -457,3 +458,36 @@ function initImageTrail(config = {}) {
   };
 }
 
+/* ----------------------
+   Footer Parallax Effect
+----------------------- */
+
+function initFooterParallax(){
+  document.querySelectorAll('[data-footer-parallax]').forEach(el => {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: el,
+        start: 'clamp(top bottom)',
+        end: 'clamp(top top)',
+        scrub: true
+      }
+    });
+  
+    const inner = el.querySelector('[data-footer-parallax-inner]');
+    const dark  = el.querySelector('[data-footer-parallax-dark]');
+  
+    if (inner) {
+      tl.from(inner, {
+        yPercent: -25,
+        ease: 'linear'
+      });
+    }
+  
+    if (dark) {
+      tl.from(dark, {
+        opacity: 0.5,
+        ease: 'linear'
+      }, '<');
+    }
+  });
+}
