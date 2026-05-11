@@ -314,6 +314,10 @@ function initImageTrail(config = {}) {
     isActive: false
   };
 
+  state.trailImages.forEach(img => {
+    img.style.pointerEvents = 'none';
+  });
+
   // Utility functions
   const MathUtils = {
     lerp: (a, b, n) => (1 - n) * a + n * b,
